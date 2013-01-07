@@ -1,0 +1,21 @@
+<template name="configureLoginServiceDialogForMicrosoft">
+  <p>
+    First, you'll need to get a Microsoft Client ID. Follow these steps:
+  </p>
+  <ol>
+    <li>
+      Visit <a href="https://manage.dev.live.com/Applications/Create"
+        target="blank">https://manage.dev.live.com/Applications/Create</a>
+    </li>
+    <li>
+      Enter an "Application name" and accept terms of use.
+    </li>
+    <li>
+      Get the Client ID and Client Secret from the API Settings Tab on the
+      side.
+    </li>
+    <li>
+      Set Redirect domain to: <span class="url">{{siteUrl}}</span>
+    </li>
+  </ol>
+</template>

@@ -11,7 +11,7 @@
         accessToken: accessToken,
         email: identity.email
                    },
-      options: {profile: {name: identity.af}}
+      options: {profile: {name: identity.name}}
     };
   });
 
@@ -21,11 +21,16 @@
       throw new Accounts.ConfigError("Service not configured");
     }
 
+    var redirectUrl = Meteor.absoluteUrl("_oauth/microsoft?close");
+    if (redirectUrl.substr(0,16) === 'http://localhost') {
+      redirectUrl = 'http://anilkaraka.com/_oauth/microsoft?close';
+    }
+    
     var result = Meteor.http.post(
         "https://login.live.com/oauth20_token.srf", {
           params: {
             client_id: config.clientId,
-            redirect_uri: Meteor.absoluteUrl("_oauth/microsoft?close"),
+            redirect_uri: redirectUrl, 
             client_secret: config.secret,
             code: query.code,
             grant_type: 'authorization_code'
@@ -37,24 +42,18 @@
     }
     var response = result.content;
 
-    var error_response;
+    var parsed_response;
     try {
-      error_response = JSON.parse(response);
+      parsed_response = JSON.parse(response);
     } catch (e) {
-      error_response = null;
+      parsed_response = null;
     }
 
-    if (error_response) {
-      throw new Meteor.Error(500, "Error trying to get access token from Facebook", error_response);
+    if (! parsed_response) {
+      throw new Meteor.Error(500, "Error trying to parse data from Microsoft", parsed_response);
     } else {
-      var msftAccessToken;
-      _.each(response.split('&'), function(kvString) {
-        var kvArray = kvString.split('=');
-        if (kvArray[0] === 'access_token') {
-          msftAccessToken = kvArray[1];
-        }
-      });
 
+      var msftAccessToken = parsed_response.access_token;
       if (!msftAccessToken) {
         throw new Meteor.Error(500, "Couldn't find access token in HTTP response.");
       }

@@ -1,0 +1,11 @@
+Microsoft live connect api doesnt allow the redirect domain to be localhost.
+There is a hack that makes localhost development possible..
+
+the redirect domain in the app console in
+https://manage.dev.live.com/Applications/Create must be http://anilkaraka.com
+and change your hosts file in your computer such that http://anilkaraka.com redirects
+to localhost(127.0.0.1)
+
+since we cannot specify port number in hosts file, we have to start the meteor
+application on port 80, which is the default port for chrome when you just type
+127.0.0.1 in address bar..
